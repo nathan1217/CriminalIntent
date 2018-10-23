@@ -21,13 +21,13 @@ class CrimeLab private constructor(context: Context) {
         return mCrimes
     }
 
-    fun getCrime(id: UUID): Crime? {
+    fun getCrime(id: UUID): Crime {
         for (crime in mCrimes) {
             if (crime.mId == id) {
                 return crime
             }
         }
-        return null
+        return Crime()
     }
 
     companion object {
