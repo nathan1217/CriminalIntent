@@ -22,7 +22,6 @@ open class CrimeHolder(view: View, private val context: Context) : RecyclerView.
 
     init {
         itemView.setOnClickListener { _ ->
-            //            Toast.makeText(context, mCrime.mTitle + " clicked!", Toast.LENGTH_SHORT).show()
             val intent: Intent = CrimeActivity.newIntent(context, mCrime.mId)
             startActivity(context, intent, null)
         }

@@ -22,11 +22,23 @@ class CrimeListFragment : Fragment() {
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateUI()
+    }
+
     private fun updateUI() {
         val crimeLab = CrimeLab[activity!!]
         val crimes = crimeLab.getCrimes()
-        mAdapter = CrimeAdapter(crimes, this.context!!)
-        mCrimeRecyclerView.adapter = mAdapter
+        when {
+            mAdapter != null -> {
+                mAdapter.notifyItemChanged(0)
+            }
+            else -> {
+                mAdapter = CrimeAdapter(crimes, this.context!!)
+                mCrimeRecyclerView.adapter = mAdapter
+            }
+        }
     }
 
 

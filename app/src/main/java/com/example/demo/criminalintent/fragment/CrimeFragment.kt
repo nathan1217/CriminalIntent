@@ -27,7 +27,7 @@ class CrimeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val crimeId = activity!!.intent.getSerializableExtra(CrimeActivity.EXTRA_CRIME_ID) as UUID
+        val crimeId: UUID = arguments!!.getSerializable(ARG_CRIME_ID) as UUID
         mCrime = CrimeLab[context!!].getCrime(crimeId)
     }
 
@@ -66,5 +66,17 @@ class CrimeFragment : Fragment() {
         mPoliceCheckBox.setOnCheckedChangeListener { _, isChecked -> mCrime.mRequiresPolice = isChecked }
 
         return view
+    }
+
+    companion object {
+        private const val ARG_CRIME_ID: String = "crime_id"
+        fun newInstance(crimeId: UUID): CrimeFragment {
+            var args: Bundle = Bundle()
+            args.putSerializable(ARG_CRIME_ID, crimeId)
+
+            var fragment: CrimeFragment = CrimeFragment()
+            fragment.arguments = args
+            return fragment
+        }
     }
 }
