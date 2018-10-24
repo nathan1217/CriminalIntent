@@ -11,10 +11,6 @@ import com.example.demo.criminalintent.fragment.CrimeFragment
 import com.example.demo.criminalintent.model.CrimeLab
 import android.content.Intent
 import java.util.*
-import java.nio.file.Files.size
-
-
-
 
 class CrimePagerActivity : AppCompatActivity() {
     private lateinit var mViewPager: ViewPager
@@ -46,7 +42,7 @@ class CrimePagerActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val EXTRA_CRIME_ID = "com.bignerdranch.android.criminalintent.crime_id"
+        private const val EXTRA_CRIME_ID = "com.bignerdranch.android.criminalintent.crime_id"
         fun newIntent(packageContext: Context, crimeId: UUID): Intent {
             val intent = Intent(packageContext, CrimePagerActivity::class.java)
             intent.putExtra(EXTRA_CRIME_ID, crimeId)
