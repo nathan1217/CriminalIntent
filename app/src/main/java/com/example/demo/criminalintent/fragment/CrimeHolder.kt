@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.demo.criminalintent.CrimeActivity
+import com.example.demo.criminalintent.CrimePagerActivity
 import com.example.demo.criminalintent.R
 import com.example.demo.criminalintent.model.Crime
 import java.text.DateFormat
@@ -22,7 +23,7 @@ open class CrimeHolder(view: View, private val context: Context) : RecyclerView.
 
     init {
         itemView.setOnClickListener { _ ->
-            val intent: Intent = CrimeActivity.newIntent(context, mCrime.mId)
+            val intent: Intent = CrimePagerActivity.newIntent(context, mCrime.mId)
             startActivity(context, intent, null)
         }
     }

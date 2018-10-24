@@ -30,16 +30,10 @@ class CrimeListFragment : Fragment() {
     private fun updateUI() {
         val crimeLab = CrimeLab[activity!!]
         val crimes = crimeLab.getCrimes()
-        when {
-            mAdapter != null -> {
-                mAdapter.notifyItemChanged(0)
-            }
-            else -> {
-                mAdapter = CrimeAdapter(crimes, this.context!!)
-                mCrimeRecyclerView.adapter = mAdapter
-            }
-        }
+
+        mAdapter = CrimeAdapter(crimes, this.context!!)
+        mCrimeRecyclerView.adapter = mAdapter
     }
-
-
 }
+
+
