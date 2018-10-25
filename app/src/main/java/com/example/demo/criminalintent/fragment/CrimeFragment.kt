@@ -24,6 +24,7 @@ import android.app.Instrumentation
 
 
 class CrimeFragment : Fragment() {
+    public var mIsAdd :Boolean = false
     private lateinit var mCrime: Crime
     private lateinit var mTitleField: EditText
     private lateinit var mDateButton: Button

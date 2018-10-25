@@ -8,13 +8,17 @@ class CrimeLab private constructor(context: Context) {
     private var mCrimes = ArrayList<Crime>()
 
     init {
-        for (i in 0..99) {
-            val crime = Crime()
-            crime.mTitle = "Crime #$i"
-            crime.mSolved = i % 2 == 0// Every other one
-            crime.mRequiresPolice = Random(i.toLong()).nextInt() % 2 === 0
-            mCrimes.add(crime)
-        }
+//        for (i in 0..99) {
+//            val crime = Crime()
+//            crime.mTitle = "Crime #$i"
+//            crime.mSolved = i % 2 == 0// Every other one
+//            crime.mRequiresPolice = Random(i.toLong()).nextInt() % 2 === 0
+//            mCrimes.add(crime)
+//        }
+    }
+
+    fun addCrime(data: Crime) {
+        mCrimes.add(data)
     }
 
     fun getCrimes(): List<Crime> {
