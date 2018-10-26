@@ -42,10 +42,12 @@ class CrimePagerActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val EXTRA_CRIME_ID = "com.bignerdranch.android.criminalintent.crime_id"
-        fun newIntent(packageContext: Context, crimeId: UUID): Intent {
+        private const val EXTRA_CRIME_ID = "com.example.demo.criminalintent.crime_id"
+        private const val EXTRA_SUBTITLE = "com.example.demo.criminalintent.subtitle"
+        fun newIntent(packageContext: Context, crimeId: UUID, showSubtitle: Boolean): Intent {
             val intent = Intent(packageContext, CrimePagerActivity::class.java)
             intent.putExtra(EXTRA_CRIME_ID, crimeId)
+            intent.putExtra(EXTRA_SUBTITLE, showSubtitle)
             return intent
         }
     }
