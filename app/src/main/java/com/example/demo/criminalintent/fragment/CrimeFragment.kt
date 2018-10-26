@@ -79,6 +79,11 @@ class CrimeFragment : Fragment() {
         return view
     }
 
+    override fun onPause() {
+        super.onPause()
+        CrimeLab[activity!!].updateCrime(mCrime)
+    }
+
     private fun updateDate() {
         mDateButton.text = DateFormat.getDateInstance(1).format(mCrime.mDate)
     }

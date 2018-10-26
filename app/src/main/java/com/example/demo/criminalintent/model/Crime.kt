@@ -2,11 +2,10 @@ package com.example.demo.criminalintent.model
 
 import java.util.*
 
+class Crime @JvmOverloads constructor(var mId: UUID = UUID.randomUUID()) {
+    var mDate: Date = Date()
+    var mTitle: String? = null
+    var mSolved: Boolean = false
+    var mRequiresPolice: Boolean = false
 
-class Crime {
-     var mId: UUID = UUID.randomUUID()
-     var mTitle: String? = null
-     var mDate: Date = Date()
-     var mSolved: Boolean = false
-     var mRequiresPolice: Boolean = false
 }

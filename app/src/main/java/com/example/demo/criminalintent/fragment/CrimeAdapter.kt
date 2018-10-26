@@ -1,8 +1,6 @@
 package com.example.demo.criminalintent.fragment
 
-import android.app.Activity
 import android.content.Context
-import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,7 +8,9 @@ import com.example.demo.criminalintent.R
 import com.example.demo.criminalintent.model.Crime
 import com.example.demo.criminalintent.model.ItemType
 
-class CrimeAdapter(private val mCrimes: List<Crime>, private val context: Context) :
+
+
+class CrimeAdapter(private var mCrimes: List<Crime>, private val context: Context) :
     RecyclerView.Adapter<CrimeHolder>() {
     private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -42,5 +42,9 @@ class CrimeAdapter(private val mCrimes: List<Crime>, private val context: Contex
             true -> ItemType.ITEM_TYPE_POLICE.ordinal
             else -> ItemType.ITEM_TYPE_NORMAL.ordinal
         }
+    }
+
+    fun setCrimes(crimes: List<Crime>) {
+        mCrimes = crimes
     }
 }

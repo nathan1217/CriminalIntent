@@ -1,37 +1,78 @@
 package com.example.demo.criminalintent.model
 
+import android.content.ContentValues
 import android.content.Context
+import com.example.demo.criminalintent.database.CrimeBaseHelper
+import android.database.sqlite.SQLiteDatabase
 import java.util.*
-import kotlin.collections.ArrayList
+import com.example.demo.criminalintent.database.CrimeDbSchema.CrimeTable
+import com.example.demo.criminalintent.database.CrimeCursorWrapper
+
 
 class CrimeLab private constructor(context: Context) {
-    private var mCrimes = ArrayList<Crime>()
+    private val mContext: Context = context.applicationContext
+    private val mDatabase: SQLiteDatabase
 
     init {
-//        for (i in 0..99) {
-//            val crime = Crime()
-//            crime.mTitle = "Crime #$i"
-//            crime.mSolved = i % 2 == 0// Every other one
-//            crime.mRequiresPolice = Random(i.toLong()).nextInt() % 2 === 0
-//            mCrimes.add(crime)
-//        }
+        mDatabase = CrimeBaseHelper(mContext)
+            .writableDatabase
     }
 
     fun addCrime(data: Crime) {
-        mCrimes.add(data)
+        val values = getContentValues(data)
+        mDatabase.insert(CrimeTable.NAME, null, values)
+    }
+
+    fun updateCrime(crime: Crime) {
+        val uuidString = crime.mId.toString()
+        val values = getContentValues(crime)
+        mDatabase.update(
+            CrimeTable.NAME, values,
+            CrimeTable.Cols.UUID + " = ?",
+            arrayOf(uuidString)
+        )
     }
 
     fun getCrimes(): List<Crime> {
-        return mCrimes
+        val crimes = ArrayList<Crime>()
+        val cursor = queryCrimes(null, null)
+        cursor.use { cursor ->
+            cursor.moveToFirst()
+            while (!cursor.isAfterLast) {
+                crimes.add(cursor.crime!!)
+                cursor.moveToNext()
+            }
+        }
+        return crimes
     }
 
     fun getCrime(id: UUID): Crime {
-        for (crime in mCrimes) {
-            if (crime.mId == id) {
-                return crime
+        var cursor: CrimeCursorWrapper = queryCrimes(
+            CrimeTable.Cols.UUID + " = ?",
+            arrayOf(id.toString())
+        )
+        return try {
+            if (cursor.count != 0) {
+                cursor.moveToFirst()
+                cursor.crime!!
+            } else {
+                Crime()
             }
+        } finally {
+            cursor.close()
         }
-        return Crime()
+    }
+
+    private fun queryCrimes(whereClause: String?, whereArgs: Array<String>?): CrimeCursorWrapper {
+        return CrimeCursorWrapper(
+            mDatabase.query(
+                CrimeTable.NAME, // having
+                null // orderBy
+                , // Columns - null selects all columns
+                whereClause,
+                whereArgs, null, null, null
+            )
+        )
     }
 
     companion object {
@@ -47,6 +88,16 @@ class CrimeLab private constructor(context: Context) {
                 }
             }
             return sCrimeLab!!
+        }
+
+        fun getContentValues(crime: Crime): ContentValues {
+            val values = ContentValues()
+            values.put(CrimeTable.Cols.UUID, crime.mId.toString())
+            values.put(CrimeTable.Cols.TITLE, crime.mTitle)
+            values.put(CrimeTable.Cols.DATE, crime.mDate.time)
+            values.put(CrimeTable.Cols.SOLVED, if (crime.mSolved) 1 else 0)
+            values.put(CrimeTable.Cols.REQUIRED_POLICE, if (crime.mRequiresPolice) 1 else 0)
+            return values
         }
     }
 }

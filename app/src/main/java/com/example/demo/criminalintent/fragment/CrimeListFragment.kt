@@ -15,7 +15,7 @@ import android.support.v7.app.AppCompatActivity
 
 class CrimeListFragment : Fragment() {
     private lateinit var mCrimeRecyclerView: RecyclerView
-    private lateinit var mAdapter: CrimeAdapter
+    private var mAdapter: CrimeAdapter? = null
     private var mSubtitleVisible: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +49,7 @@ class CrimeListFragment : Fragment() {
             R.id.new_crime -> {
                 val crime = Crime()
                 CrimeLab[activity!!].addCrime(crime)
-                val intent = CrimePagerActivity.newIntent(activity!!, crime.mId, mSubtitleVisible)
+                val intent = CrimePagerActivity.newIntent(activity!!, crime.mId)
                 startActivity(intent)
                 true
             }
@@ -90,9 +90,13 @@ class CrimeListFragment : Fragment() {
     private fun updateUI() {
         val crimeLab = CrimeLab[activity!!]
         val crimes = crimeLab.getCrimes()
-
-        mAdapter = CrimeAdapter(crimes, this.context!!)
-        mCrimeRecyclerView.adapter = mAdapter
+        if (mAdapter == null) {
+            mAdapter = CrimeAdapter(crimes, this.context!!)
+            mCrimeRecyclerView.adapter = mAdapter
+        } else {
+            mAdapter!!.setCrimes(crimes)
+            mAdapter!!.notifyDataSetChanged()
+        }
         updateSubtitle()
     }
 
