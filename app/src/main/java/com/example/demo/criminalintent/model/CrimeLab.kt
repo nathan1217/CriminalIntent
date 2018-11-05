@@ -97,6 +97,7 @@ class CrimeLab private constructor(context: Context) {
             values.put(CrimeTable.Cols.DATE, crime.mDate.time)
             values.put(CrimeTable.Cols.SOLVED, if (crime.mSolved) 1 else 0)
             values.put(CrimeTable.Cols.REQUIRED_POLICE, if (crime.mRequiresPolice) 1 else 0)
+            values.put(CrimeTable.Cols.SUSPECT, crime.mSuspect)
             return values
         }
     }

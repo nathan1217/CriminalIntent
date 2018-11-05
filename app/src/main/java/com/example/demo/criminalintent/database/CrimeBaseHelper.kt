@@ -13,8 +13,9 @@ class CrimeBaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
                     CrimeDbSchema.CrimeTable.Cols.UUID + ", " +
                     CrimeDbSchema.CrimeTable.Cols.TITLE + ", " +
                     CrimeDbSchema.CrimeTable.Cols.DATE + ", " +
-                    CrimeDbSchema.CrimeTable.Cols.SOLVED +", " +
-                    CrimeDbSchema.CrimeTable.Cols.REQUIRED_POLICE +
+                    CrimeDbSchema.CrimeTable.Cols.SOLVED + ", " +
+                    CrimeDbSchema.CrimeTable.Cols.REQUIRED_POLICE + "," +
+                    CrimeDbSchema.CrimeTable.Cols.SUSPECT +
                     ")"
         )
     }
@@ -22,7 +23,7 @@ class CrimeBaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
     companion object {
-        private const val VERSION = 1
+        private const val VERSION = 2
         private const val DATABASE_NAME = "crimeBase.db"
     }
 }

@@ -7,5 +7,5 @@ class Crime @JvmOverloads constructor(var mId: UUID = UUID.randomUUID()) {
     var mTitle: String? = null
     var mSolved: Boolean = false
     var mRequiresPolice: Boolean = false
-
+    var mSuspect: String? = null
 }

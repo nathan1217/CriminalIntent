@@ -15,21 +15,25 @@ import android.text.Editable
 import android.widget.Button
 import android.widget.CheckBox
 import com.example.demo.criminalintent.model.CrimeLab
-import com.example.demo.criminalintent.CrimeActivity
 import java.text.DateFormat
 import java.util.*
-import android.R.attr.data
 import android.app.Activity
-import android.app.Instrumentation
+import android.content.pm.PackageManager
+import android.database.Cursor
+import android.net.Uri
+import android.provider.ContactsContract
+import android.widget.TextView
 
 
 class CrimeFragment : Fragment() {
-    public var mIsAdd :Boolean = false
+    public var mIsAdd: Boolean = false
     private lateinit var mCrime: Crime
     private lateinit var mTitleField: EditText
     private lateinit var mDateButton: Button
     private lateinit var mSolvedCheckBox: CheckBox
     private lateinit var mPoliceCheckBox: CheckBox
+    private lateinit var mBtnCrimeReport: Button
+    private lateinit var mBtnSuspect: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +80,31 @@ class CrimeFragment : Fragment() {
         mPoliceCheckBox.isChecked = mCrime.mRequiresPolice
         mPoliceCheckBox.setOnCheckedChangeListener { _, isChecked -> mCrime.mRequiresPolice = isChecked }
 
+        mBtnCrimeReport = view.findViewById(R.id.crime_report)
+        mBtnCrimeReport.setOnClickListener { _ ->
+            var intent: Intent = Intent(Intent.ACTION_SEND)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, getCrimeReport())
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject))
+            intent = Intent.createChooser(intent, getString(R.string.send_report))
+            startActivity(intent)
+        }
+        var pickContact: Intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+//        pickContact.addCategory(Intent.CATEGORY_HOME)
+        mBtnSuspect = view.findViewById(R.id.crime_suspect)
+        mBtnSuspect.setOnClickListener {
+            startActivityForResult(pickContact, REQUEST_CONTACT)
+        }
+
+        if (mCrime.mSuspect != null) {
+            mBtnSuspect.text = mCrime.mSuspect
+        }
+
+        var manager: PackageManager = activity!!.packageManager
+        if (manager.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null) {
+            mBtnSuspect.isEnabled = false
+        }
+
         return view
     }
 
@@ -88,6 +117,27 @@ class CrimeFragment : Fragment() {
         mDateButton.text = DateFormat.getDateInstance(1).format(mCrime.mDate)
     }
 
+    private fun getCrimeReport(): String {
+        var solvedString: String? = null
+        if (mCrime.mSolved) {
+            solvedString = getString(R.string.crime_report_solved)
+        } else {
+            solvedString = getString(R.string.crime_report_unsolved)
+        }
+        val dateFormat = "EEE, MMM dd"
+        val dateString = DateFormat.getDateInstance(1).format(mCrime.mDate)
+        var suspect = mCrime.mSuspect
+        if (suspect == null) {
+            suspect = getString(R.string.crime_report_no_suspect)
+        } else {
+            suspect = getString(R.string.crime_report_suspect, suspect)
+        }
+        return getString(
+            R.string.crime_report,
+            mCrime.mTitle, dateString, solvedString, suspect
+        )
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK) {
             return
@@ -96,6 +146,24 @@ class CrimeFragment : Fragment() {
             val date = data!!.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
             mCrime.mDate = date
             updateDate()
+        } else if (requestCode === REQUEST_CONTACT) {
+            var contactUrl: Uri = data!!.getData()
+            var quesryFields = arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
+            var cursor: Cursor = activity!!.contentResolver.query(contactUrl, quesryFields, null, null, null)
+            try {
+                // Double-check that you actually got results
+                if (cursor.count === 0) {
+                    return
+                }
+                // Pull out the first column of the first row of data -
+                // that is your suspect's name
+                cursor.moveToFirst()
+                val suspect = cursor.getString(0)
+                mCrime.mSuspect = suspect
+                mBtnSuspect.setText(suspect)
+            } finally {
+                cursor.close()
+            }
         }
     }
 
@@ -103,6 +171,7 @@ class CrimeFragment : Fragment() {
         private const val ARG_CRIME_ID: String = "crime_id"
         private const val DIALOG_DATE: String = "DialogDate"
         private const val REQUEST_DATE: Int = 0
+        private const val REQUEST_CONTACT = 1
         fun newInstance(crimeId: UUID): CrimeFragment {
             var args: Bundle = Bundle()
             args.putSerializable(ARG_CRIME_ID, crimeId)
