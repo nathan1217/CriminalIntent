@@ -7,8 +7,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import com.example.demo.criminalintent.CrimeActivity
 import com.example.demo.criminalintent.CrimePagerActivity
 import com.example.demo.criminalintent.R
 import com.example.demo.criminalintent.model.Crime
