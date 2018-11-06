@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase
 import java.util.*
 import com.example.demo.criminalintent.database.CrimeDbSchema.CrimeTable
 import com.example.demo.criminalintent.database.CrimeCursorWrapper
+import java.io.File
 
 
 class CrimeLab private constructor(context: Context) {
@@ -61,6 +62,11 @@ class CrimeLab private constructor(context: Context) {
         } finally {
             cursor.close()
         }
+    }
+
+    fun getPhotoFile(crime: Crime): File {
+        val filesDir = mContext.filesDir
+        return File(filesDir, crime.getPhotoFilename())
     }
 
     private fun queryCrimes(whereClause: String?, whereArgs: Array<String>?): CrimeCursorWrapper {
