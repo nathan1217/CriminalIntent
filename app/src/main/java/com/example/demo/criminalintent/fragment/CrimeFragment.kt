@@ -15,6 +15,7 @@ import com.example.demo.criminalintent.model.CrimeLab
 import java.text.DateFormat
 import java.util.*
 import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.database.Cursor
@@ -40,6 +41,7 @@ class CrimeFragment : Fragment() {
     private lateinit var mBtnTakePhoto: Button
     private lateinit var mImgView: ImageView
     private lateinit var mPhotoFile: File
+    private var mCallBacks: CallBacks? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +65,7 @@ class CrimeFragment : Fragment() {
                 s: CharSequence, start: Int, before: Int, count: Int
             ) {
                 mCrime.mTitle = s.toString()
+                updateCrime()
             }
 
             override fun afterTextChanged(s: Editable) {
@@ -81,11 +84,17 @@ class CrimeFragment : Fragment() {
 
         mSolvedCheckBox = view.findViewById(R.id.crime_solved)
         mSolvedCheckBox.isChecked = mCrime.mSolved
-        mSolvedCheckBox.setOnCheckedChangeListener { _, isChecked -> mCrime.mSolved = isChecked }
+        mSolvedCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            mCrime.mSolved = isChecked
+            updateCrime()
+        }
 
         mPoliceCheckBox = view.findViewById(R.id.crime_police)
         mPoliceCheckBox.isChecked = mCrime.mRequiresPolice
-        mPoliceCheckBox.setOnCheckedChangeListener { _, isChecked -> mCrime.mRequiresPolice = isChecked }
+        mPoliceCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            mCrime.mRequiresPolice = isChecked
+            updateCrime()
+        }
 
         mBtnCrimeReport = view.findViewById(R.id.crime_report)
         mBtnCrimeReport.setOnClickListener { _ ->
@@ -174,6 +183,7 @@ class CrimeFragment : Fragment() {
             val date = data!!.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
             mCrime.mDate = date
             updateDate()
+            updateCrime()
         } else if (requestCode === REQUEST_CONTACT) {
             var contactUrl: Uri = data!!.getData()
             var quesryFields = arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
@@ -189,6 +199,8 @@ class CrimeFragment : Fragment() {
                 val suspect = cursor.getString(0)
                 mCrime.mSuspect = suspect
                 mBtnSuspect.text = suspect
+
+                updateCrime()
             } finally {
                 cursor.close()
             }
@@ -203,6 +215,8 @@ class CrimeFragment : Fragment() {
                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             );
             updatePhotoView()
+
+            updateCrime()
         }
     }
 
@@ -215,6 +229,25 @@ class CrimeFragment : Fragment() {
             )
             mImgView.setImageBitmap(bitmap)
         }
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        mCallBacks = context as CallBacks
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        mCallBacks = null
+    }
+
+    fun updateCrime() {
+        CrimeLab.get(activity!!).updateCrime(mCrime)
+        mCallBacks!!.onCrimeUpdated(mCrime)
+    }
+
+    interface CallBacks {
+        fun onCrimeUpdated(crime: Crime)
     }
 
     companion object {

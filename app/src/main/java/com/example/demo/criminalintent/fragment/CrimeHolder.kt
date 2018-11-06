@@ -12,7 +12,8 @@ import com.example.demo.criminalintent.R
 import com.example.demo.criminalintent.model.Crime
 import java.text.DateFormat
 
-open class CrimeHolder(view: View, private val context: Context) : RecyclerView.ViewHolder(view) {
+open class CrimeHolder(view: View, private val context: Context, private val callBacks: CrimeListFragment.CallBacks) :
+    RecyclerView.ViewHolder(view) {
 
     private val mTitleTextView: TextView = itemView.findViewById(R.id.crime_title)
     private val mDateTextView: TextView = itemView.findViewById(R.id.crime_date)
@@ -21,8 +22,7 @@ open class CrimeHolder(view: View, private val context: Context) : RecyclerView.
 
     init {
         itemView.setOnClickListener { _ ->
-            val intent: Intent = CrimePagerActivity.newIntent(context, mCrime.mId)
-            startActivity(context, intent, null)
+            callBacks.onCrimeSelected(mCrime)
         }
     }
 

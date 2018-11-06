@@ -1,6 +1,7 @@
 package com.example.demo.criminalintent.fragment
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -17,6 +18,7 @@ class CrimeListFragment : Fragment() {
     private lateinit var mCrimeRecyclerView: RecyclerView
     private var mAdapter: CrimeAdapter? = null
     private var mSubtitleVisible: Boolean = false
+    private var mCallBacks: CallBacks? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,8 +51,8 @@ class CrimeListFragment : Fragment() {
             R.id.new_crime -> {
                 val crime = Crime()
                 CrimeLab[activity!!].addCrime(crime)
-                val intent = CrimePagerActivity.newIntent(activity!!, crime.mId)
-                startActivity(intent)
+                updateUI()
+                mCallBacks!!.onCrimeSelected(crime)
                 true
             }
             R.id.show_subtitle -> {
@@ -87,17 +89,31 @@ class CrimeListFragment : Fragment() {
         outState.putBoolean(SAVED_SUBTITLE_VISIBLE, mSubtitleVisible)
     }
 
-    private fun updateUI() {
+    fun updateUI() {
         val crimeLab = CrimeLab[activity!!]
         val crimes = crimeLab.getCrimes()
         if (mAdapter == null) {
-            mAdapter = CrimeAdapter(crimes, this.context!!)
+            mAdapter = CrimeAdapter(crimes, this.context!!, mCallBacks!!)
             mCrimeRecyclerView.adapter = mAdapter
         } else {
             mAdapter!!.setCrimes(crimes)
             mAdapter!!.notifyDataSetChanged()
         }
         updateSubtitle()
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        mCallBacks = activity as CallBacks
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        mCallBacks = null
+    }
+
+    interface CallBacks {
+        fun onCrimeSelected(crime: Crime)
     }
 
     companion object {

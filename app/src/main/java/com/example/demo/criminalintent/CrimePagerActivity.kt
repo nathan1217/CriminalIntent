@@ -12,7 +12,7 @@ import com.example.demo.criminalintent.model.CrimeLab
 import android.content.Intent
 import java.util.*
 
-class CrimePagerActivity : AppCompatActivity() {
+class CrimePagerActivity : AppCompatActivity(),CrimeFragment.CallBacks {
     private lateinit var mViewPager: ViewPager
     private lateinit var mCrimes: List<Crime>
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +39,10 @@ class CrimePagerActivity : AppCompatActivity() {
                 break
             }
         }
+    }
+
+    override fun onCrimeUpdated(crime: Crime) {
+
     }
 
     companion object {

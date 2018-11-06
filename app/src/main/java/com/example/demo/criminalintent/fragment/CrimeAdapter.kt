@@ -9,8 +9,11 @@ import com.example.demo.criminalintent.model.Crime
 import com.example.demo.criminalintent.model.ItemType
 
 
-
-class CrimeAdapter(private var mCrimes: List<Crime>, private val context: Context) :
+class CrimeAdapter(
+    private var mCrimes: List<Crime>,
+    private val context: Context,
+    private val callBacks: CrimeListFragment.CallBacks
+) :
     RecyclerView.Adapter<CrimeHolder>() {
     private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -21,9 +24,9 @@ class CrimeAdapter(private var mCrimes: List<Crime>, private val context: Contex
                     R.layout.list_item_crime_police,
                     parent,
                     false
-                ), context
+                ), context, callBacks
             )
-            else -> CrimeHolder(layoutInflater.inflate(R.layout.list_item_crime, parent, false), context)
+            else -> CrimeHolder(layoutInflater.inflate(R.layout.list_item_crime, parent, false), context, callBacks)
         }
 
     }
